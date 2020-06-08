@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror
 OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
 RM = rm -f
 
-all: clean codageConv decodageConv
+all: clean codageConv decodageConv decodageEuclidien
 
 codageConv: codageConv.c
 	$(CC) -o codageConv codageConv.c
@@ -11,11 +11,13 @@ codageConv: codageConv.c
 decodageConv: decodageConv.c
 	$(CC) -o decodageConv decodageConv.c
 
-.PHONY: clean
-				test
+decodageEuclidien: decodageEuclidien.c
+	$(CC) -o decodageEuclidien decodageEuclidien.c
+
+.PHONY: clean test
 
 clean:
-	$(RM) $(OBJECTS) codageConv decodageConv
+	$(RM) $(OBJECTS) codageConv decodageConv decodageEuclidien
 
 test:
 	./codageConv 00101110
