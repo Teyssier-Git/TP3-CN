@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <time.h>
 
 #define BUFFER_SIZE 8
 
 struct way {
-    float message[BUFFER_SIZE];
+    int message[BUFFER_SIZE];
     int size; // size -1 : any way which come to the state
     float weight;
 };
@@ -29,7 +30,6 @@ struct couple {
 struct couple trans[4][2];
 
 void generateurTab(float *tab, int size){
-    tab = (float *)malloc(sizeof(float)*size);
     for (int i=0; i<size; i++) {
         tab[i] = (((float)rand()/(float)(RAND_MAX))*1);
     }
@@ -54,10 +54,9 @@ void treatment (float b1, float b2) {
     for (int i=0; i<4; i++) {
         struct way w1, w2;
 
-
         struct couple c = trans[i][0];
         copy(&w1,&temp.way[c.state]);
-        int weight = 0;
+        float weight = 0;
         float a = b1 - c.out1;
         if (a < 0) {
             weight -= a;
@@ -78,11 +77,17 @@ void treatment (float b1, float b2) {
         c = trans[i][1];
         copy(&w2,&temp.way[c.state]);
         weight = 0;
-        if (b1 != c.out1) {
-            weight++;
+        a = b1 - c.out1;
+        if (a < 0) {
+            weight -= a;
+        } else {
+            weight += a;
         }
-        if (b2 != c.out2) {
-            weight++;
+        a = b2 - c.out2;
+        if (a < 0) {
+            weight -= a;
+        } else {
+            weight += a;
         }
         w2.weight = weight + temp.way[c.state].weight;
         w2.message[temp.way[c.state].size] = c.sortie;
@@ -99,10 +104,11 @@ void treatment (float b1, float b2) {
 
 
 int main (int argc, char * argv[]) {
-    srand(100);
+    srand(10);
+    //srand((unsigned) time(NULL));
 
-    float *sequence;
     int size = 16;
+    float sequence[size];
     generateurTab(sequence, size);
 
     trans[0][0] = (struct couple){0,0,0,0};
@@ -115,9 +121,9 @@ int main (int argc, char * argv[]) {
     trans[3][1] = (struct couple){1,0,3,1};
 
 
-    float finalDecode[size/2];
+    int finalDecode[size/2];
     for (int i=0; i<size/2; i++) {
-        finalDecode[i] = 0.0;
+        finalDecode[i] = 0;
     }
 
     int i = 0;
@@ -130,7 +136,6 @@ int main (int argc, char * argv[]) {
                         temp = chemins.way[j];
                     }
                 }
-
                 if (temp.weight >= 3) {
                     printf("Error : more than 3 error detect at the position %d to %d\n",i/2-BUFFER_SIZE, i/2);
                     return 1;
@@ -153,11 +158,6 @@ int main (int argc, char * argv[]) {
         }
     }
 
-    if (temp.weight >= 3) {
-        printf("Error : more than 3 errors detected from the position %d to the position %d, weight = %.3f\n",i/2-BUFFER_SIZE, i/2,temp.weight);
-        return 0;
-    }
-
     for (int j=0; j<temp.size; j++) {
         finalDecode[i/2-BUFFER_SIZE+j] = temp.message[j];
     }
@@ -166,7 +166,8 @@ int main (int argc, char * argv[]) {
 
     printf("Message : ");
     for (int i = 0; i<size/2; i++) {
-        printf("%.2f ",finalDecode[i]);
+        printf("%d",finalDecode[i]);
     }
     printf("\n");
+    printf("Distance Euclidienne du message : %.3f\n", temp.weight);
 }
