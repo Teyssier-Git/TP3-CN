@@ -31,7 +31,7 @@ struct couple trans[4][2];
 void init() {
     for (int i =0; i<4; i++) {
         chemins.way[i].size = 0;
-        chemins.way[i].weight = INT_MAX;
+        chemins.way[i].weight = 4*BUFFER_SIZE;
     }
     chemins.way[0].weight = 0;
 }
@@ -124,6 +124,11 @@ int main (int argc, char * argv[]) {
                     }
                 }
 
+                if (temp.weight >= 3) {
+                    printf("Error : more than 3 error detect at the position %d to %d\n",i/2-BUFFER_SIZE, i/2);
+                    return 1;
+                }
+
                 for (int j=0; j<BUFFER_SIZE; j++) {
                     finalDecode[i/2-BUFFER_SIZE+j] = temp.message[j];
                 }
@@ -141,8 +146,13 @@ int main (int argc, char * argv[]) {
         }
     }
 
+    if (temp.weight >= 3) {
+        printf("Error : more than 3 error detect at the position %d the end\n",i/2-BUFFER_SIZE);
+        return 1;
+    }
+
     for (int j=0; j<temp.size; j++) {
-        finalDecode[i/2-8+j] = temp.message[j];
+        finalDecode[i/2-BUFFER_SIZE+j] = temp.message[j];
     }
 
 
