@@ -147,8 +147,8 @@ int main (int argc, char * argv[]) {
     }
 
     if (temp.weight >= 3) {
-        printf("Error : more than 3 error detect at the position %d the end\n",i/2-BUFFER_SIZE);
-        return 1;
+        printf("Error : more than 3 errors detected from the position %d to the position %d\n",i/2-BUFFER_SIZE, i/2);
+        return 0;
     }
 
     for (int j=0; j<temp.size; j++) {
