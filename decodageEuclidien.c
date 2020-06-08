@@ -163,7 +163,11 @@ int main (int argc, char * argv[]) {
     }
 
 
-
+    printf("Message à décoder : ");
+    for (int i = 0; i<size; i++) {
+        printf("%.2f ",sequence[i]);
+    }
+    printf("\n");
     printf("Message : ");
     for (int i = 0; i<size/2; i++) {
         printf("%d",finalDecode[i]);
